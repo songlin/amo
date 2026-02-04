@@ -15,7 +15,7 @@
 
 # This script is based on an initial draft generously provided by Zixuan Chen.
 # -----------------------------------------------------------------------------
-
+import os
 import types
 import numpy as np
 import mujoco, mujoco_viewer
@@ -106,7 +106,7 @@ class HumanoidEnv:
         self.device = device
         
         if robot_type == "g1":
-            model_path = "/home/wenke/SIMPLE/third_party/AMO/g1.xml"
+            model_path = os.path.join(os.path.dirname(__file__), "g1.xml")
             self.stiffness = np.array([
                 150, 150, 150, 300, 80, 20,
                 150, 150, 150, 300, 80, 20,
@@ -216,12 +216,12 @@ class HumanoidEnv:
     
         self.policy_jit = policy_jit
 
-        self.adapter = torch.jit.load("/home/wenke/SIMPLE/third_party/AMO/adapter_jit.pt", map_location=self.device)
+        self.adapter = torch.jit.load(os.path.join(os.path.dirname(__file__), "adapter_jit.pt"), map_location=self.device)
         self.adapter.eval()
         for param in self.adapter.parameters():
             param.requires_grad = False
         
-        norm_stats = torch.load("/home/wenke/SIMPLE/third_party/AMO/adapter_norm_stats.pt", weights_only=False)
+        norm_stats = torch.load(os.path.join(os.path.dirname(__file__), "adapter_norm_stats.pt"), weights_only=False)
         self.input_mean = torch.tensor(norm_stats['input_mean'], device=self.device, dtype=torch.float32)
         self.input_std = torch.tensor(norm_stats['input_std'], device=self.device, dtype=torch.float32)
         self.output_mean = torch.tensor(norm_stats['output_mean'], device=self.device, dtype=torch.float32)
@@ -351,11 +351,12 @@ class HumanoidEnv:
         self.viewer.close()
 
 if __name__ == "__main__":
-
     robot = "g1"
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    policy_pth = '/home/wenke/SIMPLE/third_party/AMO/amo_jit.pt'
+    # policy_pth = '/home/wenke/SIMPLE/third_party/AMO/amo_jit.pt'
+
+    policy_pth = os.path.join(os.path.dirname(__file__), "amo_jit.pt")
     
     policy_jit = torch.jit.load(policy_pth, map_location=device)
     
