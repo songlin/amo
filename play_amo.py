@@ -106,7 +106,7 @@ class HumanoidEnv:
         self.device = device
         
         if robot_type == "g1":
-            model_path = "g1.xml"
+            model_path = "/home/wenke/SIMPLE/third_party/AMO/g1.xml"
             self.stiffness = np.array([
                 150, 150, 150, 300, 80, 20,
                 150, 150, 150, 300, 80, 20,
@@ -127,9 +127,16 @@ class HumanoidEnv:
                 -0.1, 0.0, 0.0, 0.3, -0.2, 0.0,
                 -0.1, 0.0, 0.0, 0.3, -0.2, 0.0,
                 0.0, 0.0, 0.0,
-                0.5, 0.0, 0.2, 0.3,
-                0.5, 0.0, -0.2, 0.3,
+                0.0, 0.0, 0.0, 0.0,
+                0.0, 0.0, -0.0, 0.0,
             ])
+            # self.default_dof_pos = np.array([
+            #     0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            #    0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            #     0.0, 0.0, 0.0,
+            #     0.0, 0.0, 0.0, 0.0, 
+            #     0.0, 0.0, 0.0, 0.0,
+            # ])
             self.torque_limits = np.array([
                 88, 139, 88, 139, 50, 50,
                 88, 139, 88, 139, 50, 50,
@@ -158,7 +165,7 @@ class HumanoidEnv:
         self.model = mujoco.MjModel.from_xml_path(model_path)
         self.model.opt.timestep = self.sim_dt
         self.data = mujoco.MjData(self.model)
-        mujoco.mj_resetDataKeyframe(self.model, self.data, 0)
+        # mujoco.mj_resetDataKeyframe(self.model, self.data, 0)
         mujoco.mj_step(self.model, self.data)
         self.viewer = mujoco_viewer.MujocoViewer(self.model, self.data)
         self.viewer.commands = np.zeros(8, dtype=np.float32)
@@ -209,12 +216,12 @@ class HumanoidEnv:
     
         self.policy_jit = policy_jit
 
-        self.adapter = torch.jit.load("adapter_jit.pt", map_location=self.device)
+        self.adapter = torch.jit.load("/home/wenke/SIMPLE/third_party/AMO/adapter_jit.pt", map_location=self.device)
         self.adapter.eval()
         for param in self.adapter.parameters():
             param.requires_grad = False
         
-        norm_stats = torch.load("adapter_norm_stats.pt")
+        norm_stats = torch.load("/home/wenke/SIMPLE/third_party/AMO/adapter_norm_stats.pt", weights_only=False)
         self.input_mean = torch.tensor(norm_stats['input_mean'], device=self.device, dtype=torch.float32)
         self.input_std = torch.tensor(norm_stats['input_std'], device=self.device, dtype=torch.float32)
         self.output_mean = torch.tensor(norm_stats['output_mean'], device=self.device, dtype=torch.float32)
@@ -330,9 +337,14 @@ class HumanoidEnv:
                 self.viewer.render()
                 
             torque = (pd_target - self.dof_pos) * self.stiffness - self.dof_vel * self.damping
+
             torque = np.clip(torque, -self.torque_limits, self.torque_limits)
             
             self.data.ctrl = torque
+            # self.data.ctrl[12:15] = 0
+
+
+        
             
             mujoco.mj_step(self.model, self.data)
         
@@ -343,7 +355,7 @@ if __name__ == "__main__":
     robot = "g1"
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    policy_pth = 'amo_jit.pt'
+    policy_pth = '/home/wenke/SIMPLE/third_party/AMO/amo_jit.pt'
     
     policy_jit = torch.jit.load(policy_pth, map_location=device)
     

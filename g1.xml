@@ -46,7 +46,7 @@
   </asset>
 
   <worldbody>
-    <body name="pelvis" pos="0 0 0.793">
+    <body name="pelvis" pos="0 0 0">
       <inertial pos="0 0 -0.07605" quat="1 0 -0.000399148 0" mass="3.813" diaginertia="0.010549 0.0093089 0.0079184"/>
       <freejoint name="pelvis"/>
       <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.2 0.2 0.2 1" mesh="pelvis"/>
@@ -257,9 +257,16 @@
     <motor name="right_knee_joint" joint="right_knee_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
     <motor name="right_ankle_pitch_joint" joint="right_ankle_pitch_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
     <motor name="right_ankle_roll_joint" joint="right_ankle_roll_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
+
     <motor name="waist_yaw_joint" joint="waist_yaw_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
     <motor name="waist_roll_joint" joint="waist_roll_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
     <motor name="waist_pitch_joint" joint="waist_pitch_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
+<!-- 
+    <position name="waist_yaw_joint"   joint="waist_yaw_joint"   kp="1000" kv="30" ctrlrange="-2.618 2.618"/>
+    <position name="waist_roll_joint"  joint="waist_roll_joint"  kp="1000" kv="24" ctrlrange="-0.52 0.52"/>
+    <position name="waist_pitch_joint" joint="waist_pitch_joint" kp="1000" kv="24" ctrlrange="-0.52 0.52"/> -->
+
+
     <motor name="left_shoulder_pitch_joint" joint="left_shoulder_pitch_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
     <motor name="left_shoulder_roll_joint" joint="left_shoulder_roll_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
     <motor name="left_shoulder_yaw_joint" joint="left_shoulder_yaw_joint" gear="1" ctrllimited="true" ctrlrange="-200 200"/>
@@ -287,7 +294,7 @@
     <texture name="texplane" builtin="checker" height="512" width="512" rgb1=".2 .3 .4" rgb2=".1 .15 .2" type="2d" />
     <material name="MatPlane" reflectance="0.5" shininess="0.01" specular="0.1" texrepeat="1 1" texture="texplane" texuniform="true" /></asset>
   <worldbody>
-    <geom name="ground" type="plane" size="0 0 1" pos="0.001 0 0" quat="1 0 0 0" material="MatPlane" condim="1" conaffinity='15'/>
+    <geom name="ground" type="plane" size="0 0 1" pos="0.001 0 -0.793" quat="1 0 0 0" material="MatPlane" condim="1" conaffinity='15'/>
     <light name="main_light" pos="0 0 3" dir="0 0 -1" diffuse="1 1 1" specular="0.2 0.2 0.2" directional="true" castshadow="true"/>
     <light name="side_light" pos="2 2 2" dir="-1 -1 -1" diffuse="0.6 0.6 0.6" specular="0.1 0.1 0.1" directional="true"/>
     <light name="back_light" pos="-3 -2 3" dir="1 0 -1" diffuse="0.4 0.4 0.4" specular="0.05 0.05 0.05" directional="true"/>
